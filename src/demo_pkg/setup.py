@@ -1,11 +1,11 @@
-from setuptools import find_packages, setup
+from setuptools import setup
 
 package_name = 'demo_pkg'
 
 setup(
     name=package_name,
     version='0.0.0',
-    packages=find_packages(exclude=['test']),
+    packages=[package_name],
     data_files=[
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
@@ -17,13 +17,10 @@ setup(
     maintainer_email='3211986038@qq.com',
     description='TODO: Package description',
     license='TODO: License declaration',
-    extras_require={
-        'test': [
-            'pytest',
-        ],
-    },
+    tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'demo_node = demo_pkg.demo_node:main',   # ★ 关键
         ],
     },
 )
