@@ -9,6 +9,10 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(status_interfaces REQUIRED)
+find_package(Qt5 REQUIRED COMPONENTS Widgets)
+
+add_executable(hello_qt src/hello_qt.cpp)
+target_link_libraries(hello_qt Qt5::Widgets)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -22,4 +26,5 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
+install(TARGETS hello_qt DESTINATION lib/${PROJECT_NAME})
 ament_package()
