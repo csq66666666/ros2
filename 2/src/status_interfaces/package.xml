@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>status_interfaces</name>
+  <version>0.0.0</version>
+  <description>ROS 2 system status interfaces</description>
+  <maintainer email="csq@todo.todo">csq</maintainer>
+  <license>TODO: License declaration</license>
+
+  <!-- 1. 构建工具依赖 -->
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>rosidl_default_generators</buildtool_depend>
+
+  <!-- 2. 依赖项（因为你用了 builtin_interfaces/Time） -->
+  <depend>builtin_interfaces</depend>
+
+  <!-- 3. 运行时依赖 -->
+  <exec_depend>rosidl_default_runtime</exec_depend>
+
+  <!-- 4. 关键！声明自己属于接口包组（必须写，且必须是 member_of_group） -->
+  <member_of_group>rosidl_interface_packages</member_of_group>
+
+  <!-- 5. 导出构建类型 -->
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
