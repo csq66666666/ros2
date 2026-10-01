@@ -1,0 +1,8 @@
+sensor_msgs/Image image # 人脸图像
+---
+int16 number        # 检测到的人脸数量
+float32 use_time    # 处理耗时
+int32[] top         # 各人脸框上边界
+int32[] right       # 各人脸框右边界
+int32[] bottom      # 各人脸框下边界
+int32[] left        # 各人脸框左边界
