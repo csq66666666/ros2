@@ -16,9 +16,11 @@ class FaceDetectNode(Node):
         super().__init__('face_detect_node')              # 初始化节点，节点名 face_detect_node
         # 创建服务：类型 FaceDetector，服务名 face_detect，回调 face_detect_callback
         self.srv = self.create_service(FaceDetector, 'face_detect', self.face_detect_callback)
-        self.bridge = CvBridge()                          # 创建图像转换器
-        self.number_of_times_to_upsample = 1              # 上采样次数，越大越能检小脸但越慢
-        self.model = "hog"                                # 检测模型：hog 快(CPU)，cnn 慢(需 GPU)
+        self.bridge = CvBridge()# 创建图像转换器
+        self.declare_parameter('number_of_times_to_upsample', 1)  # 声明参数：上采样次数，越大越能检小脸但越慢
+        self.declare_parameter('model', 'hog')                # 声明参数：检测模型
+        self.number_of_times_to_upsample = self.get_parameter('number_of_times_to_upsample').value  # 上采样次数，越大越能检小脸但越慢
+        self.model = self.get_parameter('model').value          # 检测模型：hog 快(CPU)，cnn 慢(需 GPU)
         self.get_logger().info('Face Detect Service is ready.')  # 日志：服务就绪
         # 拼接默认图片的绝对路径：包share目录/resource/default.jpg
         self.default_image_path = os.path.join(
