@@ -7,6 +7,7 @@ from ament_index_python.packages import get_package_share_directory  # 获取包
 import os                                                 # 用于安全拼接路径
 from cv_bridge import CvBridge                            # ROS 图像消息 <-> OpenCV 图像 转换
 import time                                               # 用于计时
+from rcl_interfaces.msg import SetParametersResult        # 参数回调的返回类型
 
 
 class FaceDetectNode(Node):
@@ -16,11 +17,11 @@ class FaceDetectNode(Node):
         super().__init__('face_detect_node')              # 初始化节点，节点名 face_detect_node
         # 创建服务：类型 FaceDetector，服务名 face_detect，回调 face_detect_callback
         self.srv = self.create_service(FaceDetector, 'face_detect', self.face_detect_callback)
-        self.bridge = CvBridge()# 创建图像转换器
+        self.bridge = CvBridge()                          # 创建图像转换器
         self.declare_parameter('number_of_times_to_upsample', 1)  # 声明参数：上采样次数，越大越能检小脸但越慢
-        self.declare_parameter('model', 'hog')                # 声明参数：检测模型
-        self.number_of_times_to_upsample = self.get_parameter('number_of_times_to_upsample').value  # 上采样次数，越大越能检小脸但越慢
-        self.model = self.get_parameter('model').value          # 检测模型：hog 快(CPU)，cnn 慢(需 GPU)
+        self.declare_parameter('model', 'hog')            # 声明参数：检测模型
+        self.number_of_times_to_upsample = self.get_parameter('number_of_times_to_upsample').value  # 读取上采样次数
+        self.model = self.get_parameter('model').value    # 读取检测模型：hog 快(CPU)，cnn 慢(需 GPU)
         self.get_logger().info('Face Detect Service is ready.')  # 日志：服务就绪
         # 拼接默认图片的绝对路径：包share目录/resource/default.jpg
         self.default_image_path = os.path.join(
@@ -28,6 +29,18 @@ class FaceDetectNode(Node):
             'resource',                                          # 子目录
             'default.jpg'                                        # 图片文件名
         )
+        self.add_on_set_parameters_callback(self.parameter_callback)  # 注册参数回调函数
+
+    def parameter_callback(self, params):
+        """参数回调：当参数被修改时触发"""
+        for param in params:
+            if param.name == 'number_of_times_to_upsample':
+                self.number_of_times_to_upsample = param.value  # 更新上采样次数
+                self.get_logger().info(f'Updated number_of_times_to_upsample: {param.value}')
+            elif param.name == 'model':
+                self.model = param.value                          # 更新检测模型
+                self.get_logger().info(f'Updated model: {param.value}')
+        return SetParametersResult(successful=True)          # 返回成功（正确的类型）
 
     def face_detect_callback(self, request, response):
         """服务回调：收到请求后执行人脸检测并填充响应"""
