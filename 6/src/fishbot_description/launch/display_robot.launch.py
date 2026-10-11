@@ -28,7 +28,7 @@ def generate_launch_description():
     # 使用 Command 替代执行 shell 命令 "cat <model路径>"
     # 目的是把 URDF 文件内容读出来作为 robot_description 参数的值
     substitutions_command_result = launch.substitutions.Command(
-        ['cat ', launch.substitutions.LaunchConfiguration('model')]
+        ['xacro ', launch.substitutions.LaunchConfiguration('model')]
     )
     # 将命令输出包装为参数值，并指定类型为字符串（str）
     # 因为 Command 的输出默认是文本，但需要显式声明类型供 ROS 参数使用
