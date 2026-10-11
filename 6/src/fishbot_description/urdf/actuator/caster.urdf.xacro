@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:include filename="$(find fishbot_description)/urdf/fishbot/common_inertia.xacro"/>
 
 
 
@@ -8,8 +9,10 @@
          xyz    : 球心相对 base_link 的位置
          radius : 小球半径，取值要让"球底"和驱动轮轮底落在同一水平面
     -->
-    <xacro:macro name="caster_xacro" params="name xyz radius">
+    <xacro:macro name="caster_xacro" params="name xyz radius mass">
         <link name="${name}_caster_link">
+            <xacro:sphere_inertia m="${mass}" r="${radius}"/>
+
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
                 <geometry>
@@ -28,6 +31,18 @@
                 </geometry>
             </collision>
         </link>
+
+        <!-- 万向轮的摩擦配置（教程 6.3.2 的 1.3 小节）：
+             支撑轮是 fixed 固定死的、转不了，所以把摩擦系数设成 0，
+             让它在仿真里直接在地面上滑动，而不是"卡"住并且跟驱动轮抢地面。
+             mu1/mu2 是摩擦系数，kp/kd 是接触刚性/阻尼系数。
+             注意要放在 <link> 外面，<gazebo reference="..."> 是顶层标签。 -->
+        <gazebo reference="${name}_caster_link">
+            <mu1 value="0.0"/>
+            <mu2 value="0.0"/>
+            <kp value="1000000000.0"/>
+            <kd value="1.0"/>
+        </gazebo>
 
         <!-- 支撑轮只负责"撑住车身 + 被动跟随"，
              在 URDF 里用 fixed 就够了（真要让它滚，得配 Gazebo 的摩擦/万向轮插件，

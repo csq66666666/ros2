@@ -1,9 +1,13 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!-- 官方做法：每个部件文件自己 include 一次惯性宏，这样单个文件也能独立展开 -->
+    <xacro:include filename="$(find fishbot_description)/urdf/fishbot/common_inertia.xacro"/>
 
     <!-- ================= base_link 宏定义 ================= -->
-    <xacro:macro name="base_xacro" params="radius length">
+    <xacro:macro name="base_xacro" params="radius length mass">
         <link name="base_link">
+            <xacro:cylinder_inertia m="${mass}" r="${radius}" h="${length}"/>
+
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
                 <geometry>

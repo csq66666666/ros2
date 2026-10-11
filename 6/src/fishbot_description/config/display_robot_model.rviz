@@ -81,8 +81,8 @@ Visualization Manager:
           Show Trail: false
           Value: true
       Mass Properties:
-        Inertia: false
-        Mass: false
+        Inertia: true
+        Mass: true
       Name: RobotModel
       TF Prefix: ""
       Update Interval: 0

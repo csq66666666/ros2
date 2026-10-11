@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:include filename="$(find fishbot_description)/urdf/fishbot/common_inertia.xacro"/>
 
 
 
@@ -9,8 +10,13 @@
          radius : 轮子半径，决定轮底（接地）高度
          length : 轮子宽度，沿 Y 轴方向
     -->
-    <xacro:macro name="wheel_xacro" params="name xyz radius length">
+    <xacro:macro name="wheel_xacro" params="name xyz radius length mass">
         <link name="${name}_wheel_link">
+            <!-- 惯性宏按"圆柱轴向为 Z"推导，而轮子被 rpy 转到了 Y 向，
+                 所以要把同样的旋转传给宏（教程里没写这一项）。
+                 漏掉的话 izz（绕轮轴的转动惯量）会落到 Z 轴上，仿真里轮子会发飘 -->
+            <xacro:cylinder_inertia m="${mass}" r="${radius}" h="${length}" rpy="1.57079 0 0"/>
+
             <visual>
                 <!-- 圆柱默认轴向是 Z，绕 X 轴转 90° 后轴向变成 Y，轮子才立得起来。
                      这里的 rpy 只管"几何体朝向"，不是位置偏移，所以放在 visual 里是对的，
@@ -33,6 +39,16 @@
                 </geometry>
             </collision>
         </link>
+
+        <!-- 驱动轮的摩擦配置（官方 chapt6 取值）：摩擦给得很大，
+             保证轮子能"抓住"地面把车推走，而不是原地打滑。
+             mu1/mu2 摩擦系数，kp/kd 接触刚性/阻尼 -->
+        <gazebo reference="${name}_wheel_link">
+            <mu1 value="20.0"/>
+            <mu2 value="20.0"/>
+            <kp value="1000000000.0"/>
+            <kd value="1.0"/>
+        </gazebo>
 
         <!-- 驱动轮要能一直转，所以用 continuous（而不是 revolute）
              axis 写在 child link 坐标系里，且 joint 的 origin 没有旋转，

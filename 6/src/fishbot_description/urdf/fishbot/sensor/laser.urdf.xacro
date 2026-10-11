@@ -1,11 +1,14 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:include filename="$(find fishbot_description)/urdf/fishbot/common_inertia.xacro"/>
 
 
 
     <!-- ================= laser_link 宏定义 ================= -->
-    <xacro:macro name="laser_xacro" params="xyz">
+    <xacro:macro name="laser_xacro" params="xyz cylinder_mass laser_mass">
         <link name="laser_cylinder_link">
+            <xacro:cylinder_inertia m="${cylinder_mass}" r="0.01" h="0.10"/>
+
             <visual>
                 <!-- visual 的 origin 是相对本 link 坐标系，偏移只写在 joint 上，这里必须为 0 -->
                 <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -27,6 +30,8 @@
         </link>
 
         <link name="laser_link">
+            <xacro:cylinder_inertia m="${laser_mass}" r="0.02" h="0.02"/>
+
             <visual>
                 <!-- 同 laser_cylinder_link：本 link 的几何体就在自己的坐标系原点，
                      相对杆子的高度由 laser_joint 的 origin(0,0,0.05) 决定 -->
