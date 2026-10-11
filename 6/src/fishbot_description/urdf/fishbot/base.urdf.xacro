@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- ================= base_link 宏定义 ================= -->
+    <xacro:macro name="base_xacro" params="radius length">
+        <link name="base_link">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <cylinder radius="${radius}" length="${length}"/>
+                </geometry>
+                <material name="blue">
+                    <color rgba="1.0 1.0 1.0 0.5"/>
+                </material>
+            </visual>
+        </link>
+    </xacro:macro>
+
+    <!-- ================= base_footprint 宏定义 =================
+         一个空的虚拟 link，用来表示"车体在地面上的投影"，
+         它才是整个机器人的 TF 根节点，base_link 位于它上方 height 处。
+         这样在 RViz 里把 Fixed Frame 选成 base_footprint，轮子就会刚好落在地面网格上。
+         height = 车体半高 + 轮子半径（本车 = 0.05 + 0.032 = 0.082）
+    -->
+    <xacro:macro name="base_footprint_xacro" params="height">
+        <link name="base_footprint"/>
+        <joint name="base_joint" type="fixed">
+            <parent link="base_footprint"/>
+            <child link="base_link"/>
+            <origin xyz="0 0 ${height}" rpy="0 0 0"/>
+        </joint>
+    </xacro:macro>
+
+</robot>

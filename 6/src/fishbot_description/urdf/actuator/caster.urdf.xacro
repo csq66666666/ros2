@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+
+
+    <!-- ================= 万向支撑轮 宏定义 =================
+         name   : front / rear，用来拼出 front_caster_link / front_caster_joint
+         xyz    : 球心相对 base_link 的位置
+         radius : 小球半径，取值要让"球底"和驱动轮轮底落在同一水平面
+    -->
+    <xacro:macro name="caster_xacro" params="name xyz radius">
+        <link name="${name}_caster_link">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <sphere radius="${radius}"/>
+                </geometry>
+                <material name="black">
+                    <color rgba="0.0 0.0 0.0 0.5"/>
+                </material>
+            </visual>
+        </link>
+
+        <!-- 支撑轮只负责"撑住车身 + 被动跟随"，
+             在 URDF 里用 fixed 就够了（真要让它滚，得配 Gazebo 的摩擦/万向轮插件，
+             单纯在 URDF 里加连续关节反而会多出两个自由度） -->
+        <joint name="${name}_caster_joint" type="fixed">
+            <parent link="base_link"/>
+            <child link="${name}_caster_link"/>
+            <origin xyz="${xyz}" rpy="0 0 0"/>
+        </joint>
+    </xacro:macro>
+
+
+
+</robot>

@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="fishbot">
+<xacro:include filename="$(find fishbot_description)/urdf/fishbot/base.urdf.xacro"/>
+<xacro:include filename="$(find fishbot_description)/urdf/fishbot/sensor/laser.urdf.xacro"/>
+<xacro:include filename="$(find fishbot_description)/urdf/fishbot/sensor/camera.urdf.xacro"/>
+<xacro:include filename="$(find fishbot_description)/urdf/fishbot/sensor/imu.urdf.xacro"/>
+<xacro:include filename="$(find fishbot_description)/urdf/actuator/wheel.urdf.xacro"/>
+<xacro:include filename="$(find fishbot_description)/urdf/actuator/caster.urdf.xacro"/>
+
+
+
+<!-- 车体：半径 0.12、高 0.10 → 底面 z=-0.05，顶面 z=+0.05 -->
+<xacro:base_xacro radius="0.12" length="0.10"/>
+
+<!-- 虚拟接地参考系：base_link 在它上方 0.082
+     （0.082 = 车体半高 0.05 + 轮子半径 0.032，正好是轮底高度） -->
+<xacro:base_footprint_xacro height="0.082"/>
+
+<!-- 传感器 -->
+<xacro:imu_xacro xyz="0 0 0.02"/>
+<xacro:laser_xacro xyz="0 0.0 0.1"/>
+<!-- 相机盒子高 0.02，顶面 z=0.05，故 z=0.06 时底面正好贴合顶面；
+     x=0.11 时盒子占 x∈[0.10,0.12]，外侧面与半径 0.12 的圆柱面齐平 -->
+<xacro:camera_xacro xyz="0.11 0.0 0.06"/>
+
+<!-- ============ 左右差速驱动轮：半径 0.032、宽 0.04 ============
+     轮底 z = -0.05 - 0.032 = -0.082  ← 这就是"地面"的高度
+     y = ±(0.12 + 0.04/2) = ±0.14，轮子内侧面正好贴住半径 0.12 的车体侧面 -->
+<xacro:wheel_xacro name="left"  xyz="0.0  0.14 -0.05" radius="0.032" length="0.04"/>
+<xacro:wheel_xacro name="right" xyz="0.0 -0.14 -0.05" radius="0.032" length="0.04"/>
+
+<!-- ============ 前后万向支撑轮：小球半径 0.016 ============
+     球心 z = -0.082 + 0.016 = -0.066，球底与轮底齐平（都在 z=-0.082）
+     球顶 z = -0.05，恰好与车体底面（z=-0.05）相切，像顶在底盘下面的一颗钢珠 -->
+<xacro:caster_xacro name="front" xyz="0.08  0.0 -0.066" radius="0.016"/>
+<xacro:caster_xacro name="rear"  xyz="-0.08 0.0 -0.066" radius="0.016"/>
+
+</robot>

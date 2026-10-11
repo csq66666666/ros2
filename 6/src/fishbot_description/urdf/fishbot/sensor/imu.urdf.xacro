@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+
+
+    <!-- ================= imu_link 宏定义 ================= -->
+    <xacro:macro name="imu_xacro" params="xyz">
+        <link name="imu_link">
+            <visual>
+                <!-- visual 的 origin 是相对本 link 坐标系，偏移只写在 joint 上，这里必须为 0 -->
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.02 0.02 0.02"/>
+                </geometry>
+                <material name="black">
+                    <color rgba="0.0 0.0 0.0 0.5"/>
+                </material>
+            </visual>
+        </link>
+
+        <joint name="imu_joint" type="fixed">
+            <parent link="base_link"/>
+            <child link="imu_link"/>
+            <origin xyz="${xyz}" rpy="0 0 0"/>
+        </joint>
+    </xacro:macro>
+
+
+
+</robot>
