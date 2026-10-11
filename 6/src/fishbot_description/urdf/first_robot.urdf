@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<!-- robot标签：URDF文件的根标签，name属性定义机器人名称 -->
+<robot name="first_robot">
+    
+    <!-- link标签：定义一个刚体部件（连杆），name属性为该部件的唯一名称 -->
+    <link name="base_link">
+        
+        <!-- visual标签：定义该link在RViz等可视化工具中的外观显示 -->
+        <visual>
+            
+            <!-- origin标签：定义visual相对于link坐标系的位姿 -->
+            <!-- xyz：位置偏移 (x, y, z)，单位：米 -->
+            <!-- rpy：姿态旋转 (roll, pitch, yaw)，单位：弧度 -->
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            
+            <!-- geometry标签：定义几何形状，这里使用圆柱体 -->
+            <!-- radius：圆柱半径 0.1米 -->
+            <!-- length：圆柱长度 0.12米 -->
+            <geometry>
+                <cylinder radius="0.1" length="0.12"/>
+            </geometry>
+            
+            <!-- material标签：定义材质，name属性为材质名称（可被其他link引用） -->
+            <material name="blue">
+                <!-- color标签：RGBA颜色值，范围0~1 -->
+                <!-- r=1.0 红, g=1.0 绿, b=1.0 蓝, a=0.5 透明度（半透明） -->
+                <color rgba="1.0 1.0 1.0 0.5"/>
+            </material>
+        </visual>
+    </link>
+
+        <link name="imu_link">
+        
+        <!-- visual标签：定义该link在RViz等可视化工具中的外观显示 -->
+        <visual>
+            
+            <!-- origin标签：定义visual相对于link坐标系的位姿 -->
+            <!-- xyz：位置偏移 (x, y, z)，单位：米 -->
+            <!-- rpy：姿态旋转 (roll, pitch, yaw)，单位：弧度 -->
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            
+            <!-- geometry标签：定义几何形状，这里使用圆柱体 -->
+            <!-- radius：圆柱半径 0.1米 -->
+            <!-- length：圆柱长度 0.12米 -->
+            <geometry>
+                <box size="0.02 0.02 0.02"/>
+            </geometry>
+            
+            <!-- material标签：定义材质，name属性为材质名称（可被其他link引用） -->
+            <material name="black">
+                <!-- color标签：RGBA颜色值，范围0~1 -->
+                <!-- r=1.0 红, g=1.0 绿, b=1.0 蓝, a=0.5 透明度（半透明） -->
+                <color rgba="0.0 0.0 0.0 0.5"/>
+            </material>
+        </visual>
+    </link>
+
+    <joint name="imu_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="imu_link"/>
+        <origin xyz="0 0 0.03" rpy="0 0 0"/>
+
+    </joint>
+    
+</robot>
