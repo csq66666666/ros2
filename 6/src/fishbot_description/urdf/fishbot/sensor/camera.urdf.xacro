@@ -16,6 +16,14 @@
                     <color rgba="0.0 0.0 0.0 0.5"/>
                 </material>
             </visual>
+
+            <!-- collision 与 visual 保持同一套几何和 origin -->
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.02 0.10 0.02"/>
+                </geometry>
+            </collision>
         </link>
 
         <joint name="camera_joint" type="fixed">

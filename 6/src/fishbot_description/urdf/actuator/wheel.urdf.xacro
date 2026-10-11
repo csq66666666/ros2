@@ -23,6 +23,15 @@
                     <color rgba="1.0 1.0 0.0 0.5"/>
                 </material>
             </visual>
+
+            <!-- 碰撞体必须把 rpy="1.57079 0 0" 一起复制过来，
+                 否则碰撞圆柱会立着（轴向 Z），轮子在地面上会"陷进去" -->
+            <collision>
+                <origin xyz="0 0 0" rpy="1.57079 0 0"/>
+                <geometry>
+                    <cylinder radius="${radius}" length="${length}"/>
+                </geometry>
+            </collision>
         </link>
 
         <!-- 驱动轮要能一直转，所以用 continuous（而不是 revolute）

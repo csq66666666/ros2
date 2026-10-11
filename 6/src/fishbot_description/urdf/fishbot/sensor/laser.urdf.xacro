@@ -16,6 +16,14 @@
                     <color rgba="0.0 0.0 0.0 1.0"/>
                 </material>
             </visual>
+
+            <!-- 雷达支杆的碰撞体 -->
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                     <cylinder radius="0.01" length="0.10"/>
+                </geometry>
+            </collision>
         </link>
 
         <link name="laser_link">
@@ -30,6 +38,14 @@
                     <color rgba="0.0 0.0 0.0 1.0"/>
                 </material>
             </visual>
+
+            <!-- 雷达本体的碰撞体 -->
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                     <cylinder radius="0.02" length="0.02"/>
+                </geometry>
+            </collision>
         </link>
 
         <joint name="laser_joint" type="fixed">
