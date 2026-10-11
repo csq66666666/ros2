@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="fishbot">
 <xacro:include filename="$(find fishbot_description)/urdf/fishbot/base.urdf.xacro"/>
+<xacro:include filename="$(find fishbot_description)/urdf/fishbot/base_footprint.urdf.xacro"/>
 <xacro:include filename="$(find fishbot_description)/urdf/fishbot/sensor/laser.urdf.xacro"/>
 <xacro:include filename="$(find fishbot_description)/urdf/fishbot/sensor/camera.urdf.xacro"/>
 <xacro:include filename="$(find fishbot_description)/urdf/fishbot/sensor/imu.urdf.xacro"/>
@@ -12,8 +13,9 @@
 <!-- 车体：半径 0.12、高 0.10 → 底面 z=-0.05，顶面 z=+0.05 -->
 <xacro:base_xacro radius="0.12" length="0.10"/>
 
-<!-- 虚拟接地参考系：base_link 在它上方 0.082
-     （0.082 = 车体半高 0.05 + 轮子半径 0.032，正好是轮底高度） -->
+<!-- 虚拟接地部件 base_footprint：车体在地面上的投影，也是整棵 TF 树的根
+     height = 车体半高 0.05 + 轮子半径 0.032 = 0.082 → 它的原点正好落在轮底（地面）上
+     RViz 里 Fixed Frame 选 base_footprint，四个轮子就会正好压在地面网格上 -->
 <xacro:base_footprint_xacro height="0.082"/>
 
 <!-- 传感器 -->

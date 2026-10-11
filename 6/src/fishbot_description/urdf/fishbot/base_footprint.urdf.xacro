@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+
+
+    <!-- ================= base_footprint 虚拟部件 =================
+         这是一个"空的"虚拟 link：没有 visual、没有 collision、也没有 inertial，
+         它不代表任何真实零件，只表示"车体在地面上的投影点"。
+
+         作用：
+           1. 作为整台机器人 TF 树的根节点（base_link 挂在它上方 height 处）
+           2. 让轮子/支撑轮的接地点正好落在 z=0，RViz 里把 Fixed Frame 选成
+              base_footprint，模型就会严丝合缝地"站"在地面网格上，
+              而不是像选 base_link 那样沉到网格下面去
+
+         height 怎么算（必须等于"车体中心到接地点"的距离）：
+                height = 车体半高 + 驱动轮半径
+           本车   = 0.10/2 + 0.032 = 0.082
+           轮底   = -0.05(车体底面) - 0.032(轮半径) = -0.082
+           所以 base_footprint 放在 base_link 下方 0.082 处，正好与轮底重合
+
+         注意：改了轮子半径或车体高度，这里的 height 必须跟着改。
+    -->
+    <xacro:macro name="base_footprint_xacro" params="height">
+        <link name="base_footprint"/>
+
+        <joint name="base_joint" type="fixed">
+            <parent link="base_footprint"/>
+            <child link="base_link"/>
+            <origin xyz="0 0 ${height}" rpy="0 0 0"/>
+        </joint>
+    </xacro:macro>
+
+
+
+</robot>

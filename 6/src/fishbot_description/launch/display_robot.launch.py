@@ -12,8 +12,9 @@ def generate_launch_description():
     # ============ 1. 定位 URDF 模型文件 ============
     # 获取 fishbot_description 功能包的 share 目录路径
     urdf_package_path = get_package_share_directory('fishbot_description')
-    # 拼接出 fishbot.urdf 文件的完整路径
-    urdf_path = os.path.join(urdf_package_path, 'urdf', 'first_robot.urdf')
+    # 拼接出 fishbot 模型文件的完整路径（xacro 源文件，启动时由 xacro 命令展开）
+    # 注意：RViz 配置里的 Fixed Frame 是 base_footprint，只有 fishbot 模型才有这个 link
+    urdf_path = os.path.join(urdf_package_path, 'urdf', 'fishbot', 'fishbot.urdf.xacro')
     default_rviz_config_path= os.path.join(urdf_package_path, 'config', 'display_robot_model.rviz')
     # ============ 2. 声明启动参数 ============
     # 声明一个名为 "model" 的启动参数，默认值为上面拼好的 urdf 路径
