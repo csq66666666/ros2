@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:include filename="$(find fishbot_description)/urdf/fishbot/common_inertia.xacro"/>
+
+
+
+    <!-- ================= laser_link 宏定义 ================= -->
+    <xacro:macro name="laser_xacro" params="xyz cylinder_mass laser_mass">
+        <link name="laser_cylinder_link">
+            <xacro:cylinder_inertia m="${cylinder_mass}" r="0.01" h="0.10"/>
+
+            <visual>
+                <!-- visual 的 origin 是相对本 link 坐标系，偏移只写在 joint 上，这里必须为 0 -->
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                     <cylinder radius="0.01" length="0.10"/>
+                </geometry>
+                <material name="black">
+                    <color rgba="0.0 0.0 0.0 1.0"/>
+                </material>
+            </visual>
+
+            <!-- 雷达支杆的碰撞体 -->
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                     <cylinder radius="0.01" length="0.10"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <link name="laser_link">
+            <xacro:cylinder_inertia m="${laser_mass}" r="0.02" h="0.02"/>
+
+            <visual>
+                <!-- 同 laser_cylinder_link：本 link 的几何体就在自己的坐标系原点，
+                     相对杆子的高度由 laser_joint 的 origin(0,0,0.05) 决定 -->
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                     <cylinder radius="0.02" length="0.02"/>
+                </geometry>
+                <material name="black">
+                    <color rgba="0.0 0.0 0.0 1.0"/>
+                </material>
+            </visual>
+
+            <!-- 雷达本体的碰撞体 -->
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                     <cylinder radius="0.02" length="0.02"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="laser_joint" type="fixed">
+            <parent link="laser_cylinder_link"/>
+            <child link="laser_link"/>
+            <origin xyz="0.0 0.0 0.05" rpy="0 0 0"/>
+        </joint>
+
+        <joint name="laser_cylinder_joint" type="fixed">
+            <parent link="base_link"/>
+            <child link="laser_cylinder_link"/>
+            <origin xyz="${xyz}" rpy="0 0 0"/>
+        </joint>
+        <gazebo reference="laser_cylinder_link">
+        <material>Gazebo/Black</material>
+        </gazebo>
+        <gazebo reference="laser_link">
+        <material>Gazebo/Black</material>
+        </gazebo>
+    </xacro:macro>
+
+
+
+</robot>

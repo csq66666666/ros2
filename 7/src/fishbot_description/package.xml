@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>fishbot_description</name>
+  <version>0.0.0</version>
+  <description>TODO: Package description</description>
+  <maintainer email="3211986038@qq.com">csq</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- ============ 运行依赖 ============
+       这个包只装 launch/urdf/config/world 这些数据文件，没有可执行程序，
+       所以全部用 exec_depend（构建期不需要） -->
+  <!-- xacro: 把 .urdf.xacro 展开成完整 URDF，两个 launch 文件的 Command 都要用 -->
+  <exec_depend>xacro</exec_depend>
+  <!-- robot_state_publisher: 发布 /robot_description 并计算 TF，RViz 和 Gazebo 都要 -->
+  <exec_depend>robot_state_publisher</exec_depend>
+  <!-- joint_state_publisher: 仅 display_robot.launch.py 用来模拟关节状态 -->
+  <exec_depend>joint_state_publisher</exec_depend>
+  <!-- rviz2: display_robot.launch.py 的可视化 -->
+  <exec_depend>rviz2</exec_depend>
+  <!-- gazebo_ros: gazebo_sim.launch.py 用到的 gazebo.launch.py 和 spawn_entity.py
+       （URDF -> SDF 的转换就发生在 spawn_entity.py 内部） -->
+  <exec_depend>gazebo_ros</exec_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

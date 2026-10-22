@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:include filename="$(find fishbot_description)/urdf/fishbot/common_inertia.xacro"/>
+
+
+
+    <!-- ================= 差速驱动轮 宏定义 =================
+         name   : left / right，用来拼出 left_wheel_link / left_wheel_joint
+         xyz    : 轮心相对 base_link 的位置（位置偏移只写在这里！）
+         radius : 轮子半径，决定轮底（接地）高度
+         length : 轮子宽度，沿 Y 轴方向
+    -->
+    <xacro:macro name="wheel_xacro" params="name xyz radius length mass">
+        <link name="${name}_wheel_link">
+            <!-- 惯性宏按"圆柱轴向为 Z"推导，而轮子被 rpy 转到了 Y 向，
+                 所以要把同样的旋转传给宏（教程里没写这一项）。
+                 漏掉的话 izz（绕轮轴的转动惯量）会落到 Z 轴上，仿真里轮子会发飘 -->
+            <xacro:cylinder_inertia m="${mass}" r="${radius}" h="${length}" rpy="1.57079 0 0"/>
+
+            <visual>
+                <!-- 圆柱默认轴向是 Z，绕 X 轴转 90° 后轴向变成 Y，轮子才立得起来。
+                     这里的 rpy 只管"几何体朝向"，不是位置偏移，所以放在 visual 里是对的，
+                     位置偏移依然只由 joint 的 origin 提供，避免偏移被算两遍。 -->
+                <origin xyz="0 0 0" rpy="1.57079 0 0"/>
+                <geometry>
+                    <cylinder radius="${radius}" length="${length}"/>
+                </geometry>
+                <material name="yellow">
+                    <color rgba="1.0 1.0 0.0 0.5"/>
+                </material>
+            </visual>
+
+            <!-- 碰撞体必须把 rpy="1.57079 0 0" 一起复制过来，
+                 否则碰撞圆柱会立着（轴向 Z），轮子在地面上会"陷进去" -->
+            <collision>
+                <origin xyz="0 0 0" rpy="1.57079 0 0"/>
+                <geometry>
+                    <cylinder radius="${radius}" length="${length}"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <!-- 驱动轮的摩擦配置（官方 chapt6 取值）：摩擦给得很大，
+             保证轮子能"抓住"地面把车推走，而不是原地打滑。
+             mu1/mu2 摩擦系数，kp/kd 接触刚性/阻尼 -->
+        <gazebo reference="${name}_wheel_link">
+            <mu1 value="20.0"/>
+            <mu2 value="20.0"/>
+            <kp value="1000000000.0"/>
+            <kd value="1.0"/>
+        </gazebo>
+
+        <!-- 驱动轮要能一直转，所以用 continuous（而不是 revolute）
+             axis 写在 child link 坐标系里，且 joint 的 origin 没有旋转，
+             所以 (0,1,0) 就是绕 base_link 的 Y 轴转。
+             左右轮都用 +Y，这样"同号角速度 = 两个轮子同时向前"，符合差速模型的约定 -->
+        <joint name="${name}_wheel_joint" type="continuous">
+            <parent link="base_link"/>
+            <child link="${name}_wheel_link"/>
+            <origin xyz="${xyz}" rpy="0 0 0"/>
+            <axis xyz="0 1 0"/>
+
+            <!-- ============ 轮子阻尼（教程里没有，这里补上）============
+                 不加这一项，轮子就是一对"完全没有刹车的自由轮"：
+                   joint 是 continuous，没有 damping、没有 friction，
+                   又没有控制器去约束它，任何一点点外力都会让轮子一直转下去。
+                 具体表现：车会在 Gazebo 里自己匀速往前溜，永远停不下来。
+
+                 实测（在 custom_room.world 里，出生点与墙有约 2.3cm 重叠）：
+                   无 damping：16 秒漂移 187 毫米，还会自己转向
+                   有 damping：16 秒漂移 0.1 毫米，基本纹丝不动
+
+                 0.1 是比较温和的值：既能刹住车，又不影响后面 6.5 章
+                 差速控制器正常驱动轮子。 -->
+            <dynamics damping="0.1" friction="0.1"/>
+        </joint>
+    </xacro:macro>
+
+
+
+</robot>

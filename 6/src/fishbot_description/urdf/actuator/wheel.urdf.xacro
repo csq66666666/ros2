@@ -1,3 +1,7 @@
+
+纯文本
+
+
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
     <xacro:include filename="$(find fishbot_description)/urdf/fishbot/common_inertia.xacro"/>
@@ -67,8 +71,8 @@
                  具体表现：车会在 Gazebo 里自己匀速往前溜，永远停不下来。
 
                  实测（在 custom_room.world 里，出生点与墙有约 2.3cm 重叠）：
-                   无 damping : 16 秒漂移 187 毫米，还会自己转向
-                   有 damping : 16 秒漂移 0.1 毫米，基本纹丝不动
+                   无 damping：16 秒漂移 187 毫米，还会自己转向
+                   有 damping：16 秒漂移 0.1 毫米，基本纹丝不动
 
                  0.1 是比较温和的值：既能刹住车，又不影响后面 6.5 章
                  差速控制器正常驱动轮子。 -->

@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!-- 官方做法：每个部件文件自己 include 一次惯性宏，这样单个文件也能独立展开 -->
+    <xacro:include filename="$(find fishbot_description)/urdf/fishbot/common_inertia.xacro"/>
+
+    <!-- ================= base_link 宏定义 ================= -->
+    <xacro:macro name="base_xacro" params="radius length mass">
+        <link name="base_link">
+            <xacro:cylinder_inertia m="${mass}" r="${radius}" h="${length}"/>
+
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <cylinder radius="${radius}" length="${length}"/>
+                </geometry>
+                <material name="blue">
+                    <color rgba="1.0 1.0 1.0 0.5"/>
+                </material>
+            </visual>
+
+            <!-- collision：碰撞属性，Gazebo 里真正参与物理计算的"硬外壳"
+                 这里和 visual 用同一套几何参数；为了省算力也可以简化成更粗的形状，
+                 但绝不能比 visual 大，否则机器人会看起来"悬空" -->
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <cylinder radius="${radius}" length="${length}"/>
+                </geometry>
+            </collision>
+        </link>
+    </xacro:macro>
+
+    <!-- base_footprint（虚拟接地部件）已经独立到 base_footprint.urdf.xacro -->
+
+</robot>

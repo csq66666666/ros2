@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="fishbot">
+<xacro:include filename="$(find fishbot_description)/urdf/fishbot/base.urdf.xacro"/>
+<xacro:include filename="$(find fishbot_description)/urdf/fishbot/base_footprint.urdf.xacro"/>
+<xacro:include filename="$(find fishbot_description)/urdf/fishbot/sensor/laser.urdf.xacro"/>
+<xacro:include filename="$(find fishbot_description)/urdf/fishbot/sensor/camera.urdf.xacro"/>
+<xacro:include filename="$(find fishbot_description)/urdf/fishbot/sensor/imu.urdf.xacro"/>
+<xacro:include filename="$(find fishbot_description)/urdf/actuator/wheel.urdf.xacro"/>
+<xacro:include filename="$(find fishbot_description)/urdf/actuator/caster.urdf.xacro"/>
+<!-- <xacro:include filename="$(find fishbot_description)/urdf/fishbot/plugins/gazebo_control_plugin.xacro"/> -->
+<xacro:include filename="$(find fishbot_description)/urdf/fishbot/plugins/gazebo_sensor_plugins.xacro"/>
+<xacro:include filename="$(find fishbot_description)/urdf/fishbot/fishbot.ros2_control.xacro" />
+
+
+
+
+
+<!-- 车体：半径 0.12、高 0.10 → 底面 z=-0.05，顶面 z=+0.05；质量 1.0kg -->
+<xacro:base_xacro radius="0.12" length="0.10" mass="1.0"/>
+
+<!-- 虚拟接地部件 base_footprint：车体在地面上的投影，也是整棵 TF 树的根
+     height = 车体半高 0.05 + 轮子半径 0.032 = 0.082 → 它的原点正好落在轮底（地面）上
+     RViz 里 Fixed Frame 选 base_footprint，四个轮子就会正好压在地面网格上
+     虚拟 link 不加 inertial（没有质量，也不参与物理计算） -->
+<xacro:base_footprint_xacro height="0.082"/>
+
+<!-- 传感器 -->
+<xacro:imu_xacro xyz="0 0 0.02" mass="0.01"/>
+<xacro:laser_xacro xyz="0 0.0 0.1" cylinder_mass="0.01" laser_mass="0.03"/>
+<!-- 相机盒子高 0.02，顶面 z=0.05，故 z=0.06 时底面正好贴合顶面；
+     x=0.11 时盒子占 x∈[0.10,0.12]，外侧面与半径 0.12 的圆柱面齐平 -->
+<xacro:camera_xacro xyz="0.11 0.0 0.06" mass="0.01"/>
+
+<!-- ============ 左右差速驱动轮：半径 0.032、宽 0.04、各 0.1kg ============
+     轮底 z = -0.05 - 0.032 = -0.082  ← 这就是"地面"的高度
+     y = ±(0.12 + 0.04/2) = ±0.14，轮子内侧面正好贴住半径 0.12 的车体侧面 -->
+<xacro:wheel_xacro name="left"  xyz="0.0  0.14 -0.05" radius="0.032" length="0.04" mass="0.1"/>
+<xacro:wheel_xacro name="right" xyz="0.0 -0.14 -0.05" radius="0.032" length="0.04" mass="0.1"/>
+
+<!-- ============ 前后万向支撑轮：小球半径 0.016、各 0.01kg ============
+     球心 z = -0.082 + 0.016 = -0.066，球底与轮底齐平（都在 z=-0.082）
+     球顶 z = -0.05，恰好与车体底面（z=-0.05）相切，像顶在底盘下面的一颗钢珠 -->
+<xacro:caster_xacro name="front" xyz="0.08  0.0 -0.066" radius="0.016" mass="0.01"/>
+<xacro:caster_xacro name="rear"  xyz="-0.08 0.0 -0.066" radius="0.016" mass="0.01"/>
+
+<!-- <xacro:gazebo_control_plugin/> -->
+<xacro:gazebo_sensor_plugin/>
+<xacro:fishbot_ros2_control />
+</robot>

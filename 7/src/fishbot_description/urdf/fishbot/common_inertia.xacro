@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+
+
+    <!-- ============================================================
+         常见几何体惯性参数（对应《ROS 2机器人开发从入门到实践》6.3.2）
+
+         官方的写法是：宏直接把 <mass> 和 <inertia> 一起生成，
+         所以调用处只有一行 —— <xacro:cylinder_inertia m="1.0" r="${radius}" h="${length}"/>
+
+         参数：m 质量(kg)；w/h/d 长方体的 x/y/z 三个方向全长(m)；
+               r 半径(m)；h 圆柱高(m)
+         单位：kg、m、kg·m²
+
+         公式（与官方一字不差）：
+           长方体：Ixx=(m/12)(h²+d²)  Iyy=(m/12)(w²+d²)  Izz=(m/12)(w²+h²)
+           圆柱  ：Ixx=Iyy=(m/12)(3r²+h²)（轴向为 Z）   Izz=(m/2)r²
+           球    ：Ixx=Iyy=Izz=(2/5)mr²
+         ============================================================ -->
+
+    <xacro:macro name="box_inertia" params="m w h d rpy:='0 0 0'">
+        <inertial>
+            <!-- rpy 是可选的，默认 0 0 0，此时与官方代码生成的 <inertial> 完全一致。
+                 只有"几何体被转过方向"的 link（本模型里是驱动轮）才需要传它，
+                 否则惯性主轴会和几何主轴对不上 -->
+            <origin xyz="0 0 0" rpy="${rpy}"/>
+            <mass value="${m}"/>
+            <inertia ixx="${m*(h*h+d*d)/12}" ixy="0.0" ixz="0.0"
+                     iyy="${m*(w*w+d*d)/12}" iyz="0.0"
+                     izz="${m*(w*w+h*h)/12}"/>
+        </inertial>
+    </xacro:macro>
+
+    <xacro:macro name="cylinder_inertia" params="m r h rpy:='0 0 0'">
+        <inertial>
+            <origin xyz="0 0 0" rpy="${rpy}"/>
+            <mass value="${m}"/>
+            <inertia ixx="${m*(3*r*r+h*h)/12}" ixy="0.0" ixz="0.0"
+                     iyy="${m*(3*r*r+h*h)/12}" iyz="0.0"
+                     izz="${m*r*r/2}"/>
+        </inertial>
+    </xacro:macro>
+
+    <xacro:macro name="sphere_inertia" params="m r rpy:='0 0 0'">
+        <inertial>
+            <origin xyz="0 0 0" rpy="${rpy}"/>
+            <mass value="${m}"/>
+            <inertia ixx="${2*m*r*r/5}" ixy="0.0" ixz="0.0"
+                     iyy="${2*m*r*r/5}" iyz="0.0"
+                     izz="${2*m*r*r/5}"/>
+        </inertial>
+    </xacro:macro>
+
+
+
+</robot>
